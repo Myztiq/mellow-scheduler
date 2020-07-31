@@ -1,26 +1,8 @@
-const { startCook, stopPreCool } = require('../lib/mellow')
+const { startCook, getInfo } = require('../lib/mellow')
 
 module.exports = async (event) => {
-  const {
-    username,
-    password,
-    temp
-  } = event
-
-  await stopPreCool(
-    {
-      username,
-      password
-    }
-  )
-
-  await startCook(
-    {
-      username,
-      password
-    },
-    temp
-  )
-
+  await startCook(event, event.temp)
+  const info = await getInfo(event)
+  console.log(info.data.MellowState)
   return event
 }
