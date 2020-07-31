@@ -1,12 +1,15 @@
 service: mellow-scheduler
 
-app: mellow-scheduler
-org: myztiq
-
 provider:
   name: aws
   runtime: nodejs12.x
 
 functions:
-  hello:
-    handler: handler.hello
+  startScheduledCook:
+    handler: handler.startScheduledCook
+    events:
+      - http:
+          path: schedule
+          method: post
+          integraiton: lambda-proxy
+          cors: true
