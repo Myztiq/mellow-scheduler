@@ -1,6 +1,9 @@
 'use strict';
 
-const startScheduledCook = require('./functions/startScheduledCook')
+const startCooling = require('./functions/startCooling')
+const startCooking = require('./functions/startCooking')
+const stopCooking = require('./functions/stopCooking')
 
-module.exports.startScheduledCook = startScheduledCook
-
+module.exports.startCooling = startCooling
+module.exports.startCooking = startCooking
+module.exports.stopCooking = stopCooking

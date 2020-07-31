@@ -5,11 +5,50 @@ provider:
   runtime: nodejs12.x
 
 functions:
-  startScheduledCook:
-    handler: handler.startScheduledCook
-    events:
-      - http:
-          path: schedule
-          method: post
-          integraiton: lambda-proxy
-          cors: true
+  startCooling:
+    handler: handler.startCooling
+  startCooking:
+    handler: handler.startCooking
+  stopCooking:
+    handler: handler.stopCooking
+
+stepFunctions:
+  stateMachines:
+    coolAndCook:
+      events:
+        - http:
+            path: schedule-cook
+            method: post
+            integraiton: lambda-proxy
+            cors: true
+      name: coolAndCookStateMachine
+      definition:
+        StartAt: StartCooling
+        States:
+          StartCooling:
+            Type: Task
+            Resource:
+              Fn::GetAtt: [startCooling, Arn]
+            Next: wait_for_start
+          wait_for_start:
+            Type: Wait
+            TimestampPath: "$.startCook"
+            Next: StartCooking
+          StartCooking:
+            Type: Task
+            Resource:
+              Fn::GetAtt: [startCooking, Arn]
+            Next: wait_for_stop
+          wait_for_stop:
+            Type: Wait
+            TimestampPath: "$.stopCook"
+            Next: StopCooking
+          StopCooking:
+            Type: Task
+            Resource:
+              Fn::GetAtt: [stopCooking, Arn]
+            End: true
+
+plugins:
+  - serverless-step-functions
+  - serverless-pseudo-parameters
